@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -59,6 +59,17 @@ app.post("/write", async (request, response) => {
   } catch (err) {
     console.log(err);
     response.status(500).send("Failed to save post.");
+  }
+});
+
+app.get("/detail/:id", async (request, response) => {
+  try {
+    const post = await db.collection("post").findOne({ _id: new ObjectId(request.params.id) });
+    if (!post) return response.status(404).send("Post not found.");
+    response.render("detail", { post });
+  } catch (err) {
+    console.log(err);
+    response.status(500).send("Failed to load post.");
   }
 });
 
