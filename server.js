@@ -25,14 +25,16 @@ app.use(async (req, res, next) => {
   if (req.session.userId) {
     try {
       // req.user: 로그인한 사용자 정보가 담긴 객체
-      req.user = await db.collection("user").findOne({ _id: new ObjectId(req.session.userId) });
+      req.user = await db
+        .collection("user")
+        .findOne({ _id: new ObjectId(req.session.userId) });
     } catch {
       req.user = null;
     }
   } else {
     req.user = null;
   }
-  // res.locals: 템플릿에서 사용할 수 있는 변수들을 담는 객체
+  // res.locals: ejs 에서 사용할 수 있는 변수들을 담아놓는 객체
   res.locals.user = req.user;
   next();
 });
@@ -72,8 +74,11 @@ app.get("/login", (req, res) => {
 
 app.post("/login", async (req, res, next) => {
   try {
-    const user = await db.collection("user").findOne({ username: req.body.username });
-    if (!user) return res.render("login", { error: "존재하지 않는 아이디입니다." });
+    const user = await db
+      .collection("user")
+      .findOne({ username: req.body.username });
+    if (!user)
+      return res.render("login", { error: "존재하지 않는 아이디입니다." });
 
     const match = await bcrypt.compare(req.body.password, user.password);
     if (!match) return res.render("login", { error: "비밀번호가 틀렸습니다." });
