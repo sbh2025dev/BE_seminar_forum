@@ -64,6 +64,7 @@ new MongoClient(url)
 // 로그인 여부를 확인하는 미들웨어 함수, next: 다음 함수로 넘어가는 함수
 // 로그인되어 있으면 다음 함수로 넘어가고, 로그인되어 있지 않으면 로그인 페이지로 리다이렉트한다.
 function isLoggedIn(req, res, next) {
+  // req.user: 로그인한 사용자 정보가 담긴 객체, 로그인되어 있지 않으면 null
   if (req.user) return next();
   res.redirect("/login");
 }
