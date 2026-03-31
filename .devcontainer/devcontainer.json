@@ -14,6 +14,6 @@
     }
   },
   "forwardPorts": [3000],
-  "postCreateCommand": "npm init -y && npm install express mongodb@5 ejs express-session bcrypt && npm install -g nodemon",
+  "postCreateCommand": "npm init -y && npm install express mongodb@5 ejs express-session bcrypt dotenv && npm install -g nodemon",
   "remoteUser": "node"
 }

@@ -8,6 +8,8 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
+require("dotenv").config();
+
 app.use(
   // secret: 세션 쿠키를 암호화할 때 사용하는 문자열
   // resave: 세션이 변경되지 않아도 매 요청마다 세션을 저장할지 여부
@@ -46,8 +48,7 @@ app.use(async (req, res, next) => {
 
 // 서버와 DB가 통신하는 방법
 let db;
-const url =
-  "mongodb+srv://sbh2025dev_db_user:ZJgWipSJIgDw42MM@cluster0.v4ics3u.mongodb.net/?appName=Cluster0";
+const url = process.env.DB_URL;
 new MongoClient(url)
   .connect()
   .then((client) => {
