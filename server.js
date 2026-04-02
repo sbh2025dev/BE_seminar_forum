@@ -1,9 +1,5 @@
 const express = require("express");
 const app = express();
-const http = require("http");
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
 const { MongoClient, ObjectId } = require("mongodb");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
@@ -90,7 +86,7 @@ new MongoClient(url)
     console.log("DB 연결성공");
     db = client.db("forum");
 
-    server.listen(3000, () => {
+    app.listen(3000, () => {
       console.log("http://localhost:3000 에서 서버 실행중");
     });
   })
@@ -295,11 +291,23 @@ app.get("/chat", (req, res) => {
   res.render("chat");
 });
 
-// io.on: 클라이언트가 소켓 연결을 할 때마다 실행되는 이벤트 리스너, socket: 연결된 클라이언트와 통신할 수 있는 객체
-io.on("connection", (socket) => {
-  socket.on("chat message", (data) => {
-    io.emit("chat message", data);
+app.get("/chat/messages", async (req, res) => {
+  const messages = await db
+    .collection("chat")
+    .find()
+    .sort({ createdAt: 1 })
+    .limit(100)
+    .toArray();
+  res.json(messages);
+});
+
+app.post("/chat/send", isLoggedIn, async (req, res) => {
+  await db.collection("chat").insertOne({
+    username: req.user.username,
+    text: req.body.text,
+    createdAt: new Date(),
   });
+  res.json({ ok: true });
 });
 
 app.get("/list", async (request, response) => {
